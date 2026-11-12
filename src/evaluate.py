@@ -34,6 +34,7 @@ def main() -> None:
         "rmse": round(float(np.sqrt(mean_squared_error(y_test, y_pred))), 3),
         "n_test": int(len(frame)),
     }
+    METRICS_OUT.parent.mkdir(parents=True, exist_ok=True)
     METRICS_OUT.write_text(
         json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8"
     )
