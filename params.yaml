@@ -1,0 +1,34 @@
+ingest:
+  source: data/external/hour.csv
+  until_year: 2011
+  stream_year: 2012
+
+data:
+  raw: data/raw/hour.csv
+  target: cnt
+  drop: [instant, dteday, casual, registered]
+  test_size: 0.2
+  split_by_time: true
+
+featurize:
+  cyclic_hour: true
+
+train:
+  model: gradient_boosting
+  n_estimators: 500
+  max_depth: 4
+  min_samples_leaf: 2
+  learning_rate: 0.1
+  seed: 42
+
+evaluate:
+  min_r2: 0.70
+
+mlflow:
+  experiment: bike-sharing
+  model_name: bike-sharing-regressor
+  primary_metric: r2
+
+monitor:
+  drift_share_threshold: 0.3
+  min_r2_on_stream: 0.70
