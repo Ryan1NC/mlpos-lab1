@@ -26,7 +26,7 @@ def log_model(model, feature_names: list[str], sample) -> None:
     import mlflow
     from mlflow.sklearn import log_model as log_sklearn_model
 
-    log_sklearn_model(model, "model", input_example=sample)
+    log_sklearn_model(model, "model", input_example=sample, skops_trusted_types=["sklearn.tree._tree.Tree"])
 
 
 def log_metrics(metrics: dict) -> None:
