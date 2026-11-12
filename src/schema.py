@@ -3,9 +3,23 @@ from __future__ import annotations
 import pandas as pd
 
 REQUIRED_COLUMNS = {
-    "instant", "dteday", "season", "yr", "mnth", "hr", "holiday",
-    "weekday", "workingday", "weathersit", "temp", "atemp", "hum",
-    "windspeed", "casual", "registered", "cnt",
+    "instant",
+    "dteday",
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "casual",
+    "registered",
+    "cnt",
 }
 
 

@@ -42,7 +42,9 @@ def main() -> None:
         n=min(500, len(frame)), random_state=int(params["train"]["seed"])
     )
     sample.to_csv(ensure_parent(PLOT_OUT), index=False)
-    tracking.log_metrics({key: value for key, value in metrics.items() if key != "n_test"})
+    tracking.log_metrics(
+        {key: value for key, value in metrics.items() if key != "n_test"}
+    )
     log.info("метрики: %s", metrics)
     if metrics["r2"] < float(params["evaluate"]["min_r2"]):
         log.error("R2 ниже установленного порога")

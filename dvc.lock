@@ -1,0 +1,151 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m src.prepare
+    deps:
+    - path: data/raw/hour.csv
+      hash: md5
+      md5: fc7d423afbce5699a61ac1a8acc533b8
+      size: 562742
+    - path: src/prepare.py
+      hash: md5
+      md5: b5f698cae8c9bcb3f4912cad67a346e7
+      size: 1646
+    - path: src/schema.py
+      hash: md5
+      md5: 1528ddfbadd38017666e788efee9649e
+      size: 1096
+    - path: src/utils.py
+      hash: md5
+      md5: 923b4c5a2214dc50211d61fb3d6d9914
+      size: 903
+    params:
+      params.yaml:
+        data:
+          raw: data/raw/hour.csv
+          target: cnt
+          drop:
+          - instant
+          - dteday
+          - casual
+          - registered
+          test_size: 0.2
+          split_by_time: true
+        train.seed: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 4d564b9730b44770d3ce722fe1b19f8e
+      size: 148298
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d25cbe6f93b6b3e88863e48040a483e4
+      size: 587486
+  featurize:
+    cmd: python -m src.featurize
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 4d564b9730b44770d3ce722fe1b19f8e
+      size: 148298
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d25cbe6f93b6b3e88863e48040a483e4
+      size: 587486
+    - path: src/featurize.py
+      hash: md5
+      md5: 95f7051a5d3f437066eeef9191609b06
+      size: 1559
+    - path: src/utils.py
+      hash: md5
+      md5: 923b4c5a2214dc50211d61fb3d6d9914
+      size: 903
+    params:
+      params.yaml:
+        data.drop:
+        - instant
+        - dteday
+        - casual
+        - registered
+        data.target: cnt
+        featurize:
+          cyclic_hour: true
+    outs:
+    - path: data/features/test.csv
+      hash: md5
+      md5: fc18a0c31bcaa3f1f76506bfe5585f6c
+      size: 134631
+    - path: data/features/train.csv
+      hash: md5
+      md5: 4b3fc077ac744ac7e4675ece9f245ff1
+      size: 533041
+  train:
+    cmd: python -m src.train
+    deps:
+    - path: data/features/train.csv
+      hash: md5
+      md5: 4b3fc077ac744ac7e4675ece9f245ff1
+      size: 533041
+    - path: src/tracking.py
+      hash: md5
+      md5: 3e9bc1a18ec37c117b0317d44887fd30
+      size: 1153
+    - path: src/train.py
+      hash: md5
+      md5: f8752a0c0b317b0df1ad92c7b79d8256
+      size: 1647
+    - path: src/utils.py
+      hash: md5
+      md5: 923b4c5a2214dc50211d61fb3d6d9914
+      size: 903
+    params:
+      params.yaml:
+        train:
+          model: gradient_boosting
+          n_estimators: 500
+          max_depth: 4
+          min_samples_leaf: 2
+          learning_rate: 0.1
+          seed: 42
+    outs:
+    - path: models/model.joblib
+      hash: md5
+      md5: c1f852fbb1100b262c49a997a850917c
+      size: 1178240
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+    - path: data/features/test.csv
+      hash: md5
+      md5: fc18a0c31bcaa3f1f76506bfe5585f6c
+      size: 134631
+    - path: models/model.joblib
+      hash: md5
+      md5: c1f852fbb1100b262c49a997a850917c
+      size: 1178240
+    - path: src/evaluate.py
+      hash: md5
+      md5: b2ee4149f1c92bde6029fde319b42c76
+      size: 1798
+    - path: src/tracking.py
+      hash: md5
+      md5: 3e9bc1a18ec37c117b0317d44887fd30
+      size: 1153
+    - path: src/utils.py
+      hash: md5
+      md5: 923b4c5a2214dc50211d61fb3d6d9914
+      size: 903
+    params:
+      params.yaml:
+        evaluate:
+          min_r2: 0.7
+        train.seed: 42
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: f0b135dc3c490f9816455b91176679d4
+      size: 71
+    - path: reports/plots/pred_vs_true.csv
+      hash: md5
+      md5: c24c41400164d5c8d92a08ca2e6f7205
+      size: 10939
